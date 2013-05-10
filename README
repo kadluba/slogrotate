@@ -1,0 +1,32 @@
+Secure Logrotate 1.0
+====================
+
+Generates an RSA keypair for root and signs rotated log files in /var/log/ as configured in /etc/logrotate.conf. Logs and signatures will be copied to /var/backup/slr/ before they get deleted from /var/log/. Signing is done during logrotate.
+
+There is a script called slrverify.sh which can be used to verify the 
+signatures of log files. This can be used by users other than root to check the integrity of archived log files. To do this slrverify.sh needs the log file in question, the signature file and the public key used to create the signature. All old public keys remain in /etc/slr/ for the purpose of signature verification.
+
+Secure Logrotate can be used to set up a logging server with cryptographically verifiable log signatures given that the system is configured in a way that root is never used by a manual administrator but only for logrotate and other automatic system tasks (separation of duties).
+
+
+LICENSE
+=======
+
+This scripts are licensed under the MIT License. You can find the license text in the LICENSE file.
+
+INSTALLATION
+============
+
+Run install.sh as root. All necessary directories will be created, scripts will be copied to /usr/bin/ and an initial pair of keys will be generated. 
+
+CONFIGURATION
+=============
+
+To activate Secure Logrotate configure it in the logrotate config files (e.g. /etc/logrotate.conf) as shown the sample /etc/slr/logrotate-slrsample.conf
+
+Add a cron job that calls /usr/bin/slrgenkeys.sh as root so that new keys are generated regularily. This enhances the security in case of leakage of a private key.
+
+RESTRICTION
+===========
+
+Secure Logrotate can only be used with a minimum number of 3 rotated log files. This means the parameter rotate must be 3 or higher in logrotate.conf for logs where Secure Logrotate is activated.
